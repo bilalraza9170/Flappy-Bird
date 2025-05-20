@@ -35,6 +35,7 @@ let gravity = 0.4;
 
 let gameOver = false;
 let score = 0;
+let canRestart = false;
 
 window.onload = function () {
     board = document.getElementById("board");
@@ -56,7 +57,8 @@ window.onload = function () {
 
     requestAnimationFrame(update);
     setInterval(placePipes, 1500) //every 1.5 seconds
-    document.addEventListener("keydown",moveBird);
+    document.addEventListener("keydown",moveBird); //for keyboard
+    document.addEventListener("touchstart", moveBird); // for mobile
 }
 
 function update() {
@@ -102,6 +104,9 @@ function update() {
 
     if (gameOver){
         context.fillText("GAME OVER", 5,90);
+        setTimeout(() => {
+            canRestart = true;
+        }, 1000); // 1 second
     }
 }
 
@@ -140,18 +145,19 @@ function moveBird(e){
         velocityY = -6;
 
         //reset game
-        if (gameOver) {
+        if (gameOver && canRestart) {
             bird.y = birdY;
             pipeArray = [];
             score = 0;
             gameOver = false;
+            canRestart = false;
         }
     }
 }
 
 function detectCollision(bird, pipe) {
-    return bird.x < pipe.x + pipe.width &&   //a's top left corner doesn't reach b's top right corner
-        bird.x + bird.width > pipe.x &&   //a's top right corner passes b's top left corner
-        bird.y < pipe.y + pipe.height &&  //a's top left corner doesn't reach b's bottom left corner
-        bird.y + bird.height > pipe.y;    //a's bottom left corner passes b's top left corner
+    return bird.x < pipe.x + pipe.width &&   //bird's top left corner doesn't reach pipe's top right corner
+        bird.x + bird.width > pipe.x &&   //bird's top right corner passes pipe's top left corner
+        bird.y < pipe.y + pipe.height &&  //bird's top left corner doesn't reach pipe's bottom left corner
+        bird.y + bird.height > pipe.y;    //bird's bottom left corner passes pipe's top left corner
 }
