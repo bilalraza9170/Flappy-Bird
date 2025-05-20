@@ -58,7 +58,10 @@ window.onload = function () {
     requestAnimationFrame(update);
     setInterval(placePipes, 1500) //every 1.5 seconds
     document.addEventListener("keydown",moveBird); //for keyboard
-    document.addEventListener("touchstart", moveBird); // for mobile
+    board.addEventListener("touchstart", function(e) {
+        e.preventDefault();
+        moveBird(e);
+    }, { passive: false }); // for mobile
 }
 
 function update() {
